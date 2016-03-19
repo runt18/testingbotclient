@@ -47,7 +47,7 @@ class TestingBotClient(object):
     def make_headers(self):
         base64string = self.get_encoded_auth_string()
         headers = {
-            'Authorization': 'Basic %s' % base64string,
+            'Authorization': 'Basic {0!s}'.format(base64string),
             'Content-Type' : 'application/x-www-form-urlencoded'
         }
         return headers
@@ -60,12 +60,11 @@ class TestingBotClient(object):
         json_data = response.read()
         connection.close()
         if response.status != 200:
-            raise TestingBotException('Failed to contact TestingBot API: %s | %s' %
-                                 (response.status, response.reason))
+            raise TestingBotException('Failed to contact TestingBot API: {0!s} | {1!s}'.format(response.status, response.reason))
         return json_data
 
     def get_encoded_auth_string(self):
-        auth_info = '%s:%s' % (self.testingbotKey, self.testingbotSecret)
+        auth_info = '{0!s}:{1!s}'.format(self.testingbotKey, self.testingbotSecret)
         if is_py2:
             base64string = base64.b64encode(auth_info)[:-1]
         else:
@@ -99,14 +98,14 @@ class Tests(object):
         params = []
 
         if status_message is not None:
-            params.append('test[status_message]=%s' % status_message)
+            params.append('test[status_message]={0!s}'.format(status_message))
         if name is not None:
-            params.append('test[name]=%s' % name)
+            params.append('test[name]={0!s}'.format(name))
         if passed is not None:
-            params.append('test[success]=%s' % ('1' if passed else '0'))
+            params.append('test[success]={0!s}'.format(('1' if passed else '0')))
         body = '&'.join(params)
         method = 'PUT'
-        url = '/tests/%s' % sessionId
+        url = '/tests/{0!s}'.format(sessionId)
         json_data = self.client.request(method, url, body=body)
         response = json_loads(json_data)
         return response['success']
@@ -114,7 +113,7 @@ class Tests(object):
     def delete_test(self, sessionId):
         """Deletes a test."""
         method = 'DELETE'
-        url = '/tests/%s' % sessionId
+        url = '/tests/{0!s}'.format(sessionId)
         json_data = self.client.request(method, url)
         response = json_loads(json_data)
         return response['success']
